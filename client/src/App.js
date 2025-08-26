@@ -11,7 +11,7 @@ function App() {
     const token = localStorage.getItem('token');
     if (token) {
       // Verify token with backend
-      fetch('http://localhost:5000/api/auth/me', {
+      fetch('https://expensetracker-a20g.onrender.com/api/auth/me', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -150,7 +150,7 @@ function LoginRegisterForm({ onLogin }) {
         ? { email, password }
         : { email, password, firstName, lastName };
 
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await fetch(`https://expensetracker-a20g.onrender.com${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -305,7 +305,7 @@ function Dashboard({ user }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    fetch('http://localhost:5000/api/transactions/stats/summary', {
+    fetch('https://expensetracker-a20g.onrender.com/api/transactions/stats/summary', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -390,10 +390,10 @@ function Transactions({ user }) {
   // Fetch data on component mount
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:5000/api/transactions', {
+      fetch('https://expensetracker-a20g.onrender.com/api/transactions', {
         headers: { 'Authorization': `Bearer ${token}` }
       }),
-      fetch('http://localhost:5000/api/categories', {
+      fetch('https://expensetracker-a20g.onrender.com/api/categories', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
     ])
@@ -416,8 +416,8 @@ function Transactions({ user }) {
     try {
       const method = editingTransaction ? 'PUT' : 'POST';
       const url = editingTransaction 
-        ? `http://localhost:5000/api/transactions/${editingTransaction.id}`
-        : 'http://localhost:5000/api/transactions';
+        ? `https://expensetracker-a20g.onrender.com/api/transactions/${editingTransaction.id}`
+        : 'https://expensetracker-a20g.onrender.com/api/transactions';
 
       const response = await fetch(url, {
         method,
@@ -460,7 +460,7 @@ function Transactions({ user }) {
     if (!window.confirm('Are you sure you want to delete this transaction?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/transactions/${id}`, {
+      const response = await fetch(`https://expensetracker-a20g.onrender.com/api/transactions/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -734,7 +734,7 @@ function Categories({ user }) {
 
   // Fetch categories
   useEffect(() => {
-    fetch('http://localhost:5000/api/categories', {
+    fetch('https://expensetracker-a20g.onrender.com/api/categories', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(response => response.json())
@@ -755,8 +755,8 @@ function Categories({ user }) {
     try {
       const method = editingCategory ? 'PUT' : 'POST';
       const url = editingCategory 
-        ? `http://localhost:5000/api/categories/${editingCategory.id}`
-        : 'http://localhost:5000/api/categories';
+        ? `https://expensetracker-a20g.onrender.com/api/categories/${editingCategory.id}`
+        : 'https://expensetracker-a20g.onrender.com/api/categories';
 
       const response = await fetch(url, {
         method,
@@ -810,7 +810,7 @@ function Categories({ user }) {
     if (!window.confirm('Are you sure you want to delete this category?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/categories/${id}`, {
+      const response = await fetch(`https://expensetracker-a20g.onrender.com/api/categories/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
