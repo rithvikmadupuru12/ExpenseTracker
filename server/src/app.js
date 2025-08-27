@@ -6,11 +6,34 @@ require('dotenv').config();
 
 const app = express();
 
-// Middleware
+// Middleware - Fixed CORS for Vercel deployments
 app.use(helmet());
+
+// CORS configuration that allows all Vercel deployments
 app.use(cors({
-  origin: '*',  // Allow all origins temporarily
-  credentials: true
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    // List of allowed origins
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://expense-tracker-frontend-rithvik-madupurus-projects.vercel.app'
+    ];
+    
+    // Allow any origin that contains 'vercel.app' (for preview deployments)
+    if (allowedOrigins.includes(origin) || origin.includes('vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 
 app.use(morgan('combined'));
