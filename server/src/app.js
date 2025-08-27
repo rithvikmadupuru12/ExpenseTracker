@@ -9,12 +9,10 @@ const app = express();
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: [
-    'http://localhost:3001', 
-    process.env.CORS_ORIGIN
-  ],
+  origin: '*',  // Allow all origins temporarily
   credentials: true
 }));
+
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
