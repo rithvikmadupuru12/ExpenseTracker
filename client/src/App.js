@@ -118,7 +118,7 @@ function App() {
                 border: '1px solid rgba(255, 255, 255, 0.2)'
               }}
             >
-              📁 Categories
+              🏷️ Categories
             </button>
             <span style={{ 
               marginLeft: '2rem',
@@ -330,7 +330,7 @@ function LoginRegisterForm({ onLogin }) {
   );
 }
 
-// Enhanced Dashboard Component - FIXED: Now receives setCurrentView as prop
+// Enhanced Dashboard Component - COMPLETE VERSION with working buttons
 function Dashboard({ user, setCurrentView }) {
   const [stats, setStats] = useState({ income: 0, expenses: 0, balance: 0 });
   const [loading, setLoading] = useState(true);
@@ -374,6 +374,41 @@ function Dashboard({ user, setCurrentView }) {
       setLoading(false);
     });
   }, []);
+
+  // Export data function
+  const handleExportData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://expensetracker-a20g.onrender.com/api/transactions', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      const data = await response.json();
+      
+      if (data.transactions) {
+        // Convert to CSV format
+        const csvHeaders = 'Date,Description,Amount,Category,Type\n';
+        const csvData = data.transactions.map(transaction => 
+          `${transaction.transaction_date},${transaction.description},${transaction.amount},${transaction.category_name || 'Uncategorized'},${transaction.category_type || 'expense'}`
+        ).join('\n');
+        
+        const csvContent = csvHeaders + csvData;
+        
+        // Create download link
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `wealthflow-transactions-${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+        
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      alert('Error exporting data. Please try again.');
+    }
+  };
 
   return (
     <div className="container">
@@ -560,11 +595,36 @@ function Dashboard({ user, setCurrentView }) {
           Manage your finances with these quick shortcuts
         </p>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <button className="btn btn-primary">➕ Add Transaction</button>
-          <button className="btn btn-secondary">📊 View Reports</button>
-          <button className="btn btn-secondary">📁 Manage Categories</button>
-          <button className="btn btn-secondary">🎯 Set Budget</button>
-          <button className="btn btn-secondary">💾 Export Data</button>
+          <button 
+            className="btn btn-primary"
+            onClick={() => setCurrentView('transactions')}
+          >
+            ➕ Add Transaction
+          </button>
+          <button 
+            className="btn btn-secondary"
+            onClick={() => alert('Reports feature coming soon! This will show detailed analytics and charts.')}
+          >
+            📊 View Reports
+          </button>
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setCurrentView('categories')}
+          >
+            🏷️ Manage Categories
+          </button>
+          <button 
+            className="btn btn-secondary"
+            onClick={() => alert('Budget feature coming soon! Set monthly spending limits and track progress.')}
+          >
+            🎯 Set Budget
+          </button>
+          <button 
+            className="btn btn-secondary"
+            onClick={handleExportData}
+          >
+            💾 Export Data
+          </button>
         </div>
       </div>
     </div>
@@ -878,7 +938,7 @@ function Transactions({ user }) {
                           fontWeight: '600'
                         }}
                       >
-                        {categoryIcons[transaction.category_name] || '📁'} {transaction.category_name || 'Uncategorized'}
+                        {categoryIcons[transaction.category_name] || '🏷️'} {transaction.category_name || 'Uncategorized'}
                       </span>
                     </td>
                     <td style={{ 
@@ -939,7 +999,7 @@ function Categories({ user }) {
   const [formData, setFormData] = useState({
     name: '',
     color: '#667eea',
-    icon: '📁',
+    icon: '🏷️',
     type: 'expense'
   });
 
@@ -951,7 +1011,7 @@ function Categories({ user }) {
   ];
 
   const iconOptions = [
-    '💰', '🍔', '🚗', '🛍️', '🎬', 
+    '💰', '🏷️', '🚗', '🛍️', '🎬', 
     '📄', '🏥', '💼', '💻', '📈'
   ];
 
@@ -1009,7 +1069,7 @@ function Categories({ user }) {
         setFormData({
           name: '',
           color: '#667eea',
-          icon: '📁',
+          icon: '🏷️',
           type: 'expense'
         });
         setShowAddForm(false);
@@ -1244,7 +1304,7 @@ function Categories({ user }) {
                       fontSize: '1.5rem'
                     }}
                   >
-                    {category.icon || '📁'}
+                    {category.icon || '🏷️'}
                   </div>
                   <div style={{ flex: 1 }}>
                     <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600', color: '#1f2937' }}>
